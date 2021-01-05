@@ -1,15 +1,27 @@
+import Dashboard from './views/Dashboard.js';
+import Posts from './views/Posts.js';
+import Settings from './views/Settings.js';
+
+
 const navigateTo = (url)=>{
        history.pushState(null,null,url);
        router();
 
 }
 
+const pathToRegEx  = path => 
+new RegExp("^"+path.replace(/\//g,"\\/").replace(/:\w+/g,"(.+)") +'$' );
+
+
+
 const router = async ()=>{
+	console.log(pathToRegEx("/posts/:id"));
+
           const routes =[
 
-{path:"/",view:()=>console.log('you are viewing home') },
-{path:"/posts",view:()=>console.log('you are viewing posts') },
-{path:"/settings",view:()=> console.log('you are viewing settings') }
+{path:"/",view: Dashboard },
+{path:"/posts",view:Posts },
+{path:"/settings",view:Settings}
 
           ];
 
@@ -18,12 +30,12 @@ const router = async ()=>{
 	const potentialMatches = routes.map(route=>{
 		return {
 			route,
-		    isMatch: location.pathname === route.path
+		    result: location.pathname.match(pathToRegEx(route.path))
 		}
 	})
 
 
-	let matched = potentialMatches.find(item => item.isMatch===true)
+	let matched = potentialMatches.find(item => item.result===null)
 	if(!matched){ 
         matched={
          route : routes[0],
@@ -31,8 +43,19 @@ const router = async ()=>{
         }
 	}
     
+const getParams = match =>{
+	const values = match.result.slice(1);
+	const keys = Array.from(match.route.path.matchAll(/:(\w+)/g)).map(result=>result[1]);
 
-	console.log(matched.route.view())
+	return Object.fromEntries(keys.map((key,i)=>{
+		 return  [keys,values[i]]
+	}))
+}
+    const viewInstance = new matched.route.view(getParams(matched));
+
+    document.querySelector("#app").innerHTML  = await viewInstance.getHTML();
+
+	//console.log(matched.route.view())
 
 } 
 

@@ -1,0 +1,41 @@
+*{
+	box-sizing: border-box;
+	margin: 0
+}
+
+a{
+	text-decoration: none;
+}
+
+.wrap{
+	display: flex;
+	background: #e6e6e6;
+	text-align: center;
+}
+
+.nav{
+	background: #222;
+	height: 100vh;
+	display:flex;
+	flex-direction: column;
+	flex-basis: 10rem;
+	
+	justify-content: space-start;
+}
+.nav a{
+	
+	color:#eee;
+	padding:1rem ;
+	border-bottom: 1px solid #555;
+	transition: all .2s ease-in-out
+	
+
+}
+.nav a:hover{
+	background: #333;
+	transform: translateX(3px);
+}
+
+.app{
+	flex:1;
+}
